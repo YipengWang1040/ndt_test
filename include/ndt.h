@@ -22,7 +22,7 @@ struct Config{
 
 struct Result{
     Eigen::Matrix4d transform;
-    int iteration;
+    size_t iteration;
 };
 
 Result ndt_matching(ConstPtr target_cloud, ConstPtr input_cloud, const Eigen::Matrix4d& initial_guess, const Config& config);

@@ -1,6 +1,3 @@
-#ifndef VOXEL_GRID_CONVARIANCE_RGB_H
-#define VOXEL_GRID_CONVARIANCE_RGB_H
-
 /* This file is a modification of file "voxel_grid_covariance.h" from PCL library.
  * Use of this file should meet the requirements of the original license.
  */
@@ -43,6 +40,7 @@
  *
  */
 
+#pragma once
 
 #include <pcl/filters/voxel_grid.h>
 #include <map>
@@ -101,13 +99,13 @@ public:
         {
         }
 
-        using Vector6d=Eigen::Matrix<double,6,1>;
-        using Matrix6d=Eigen::Matrix<double,6,6>;
+        using Vector3d=Eigen::Vector3d;
+        using Matrix3d=Eigen::Matrix3d;
 
         /** \brief Get the voxel covariance.
           * \return covariance matrix
           */
-        Matrix6d
+        Matrix3d
         getCov () const
         {
             return (cov_);
@@ -116,7 +114,7 @@ public:
         /** \brief Get the inverse of the voxel covariance.
           * \return inverse covariance matrix
           */
-        Matrix6d
+        Matrix3d
         getInverseCov () const
         {
             return (icov_);
@@ -125,7 +123,7 @@ public:
         /** \brief Get the voxel centroid.
           * \return centroid
           */
-        Vector6d
+        Vector3d
         getMean () const
         {
             return (mean_);
@@ -135,7 +133,7 @@ public:
           * \note Order corresponds with \ref getEvals
           * \return matrix whose columns contain eigen vectors
           */
-        Matrix6d
+        Matrix3d
         getEvecs () const
         {
             return (evecs_);
@@ -145,7 +143,7 @@ public:
           * \note Order corresponds with \ref getEvecs
           * \return vector of eigen values
           */
-        Vector6d
+        Vector3d
         getEvals () const
         {
             return (evals_);
@@ -160,12 +158,40 @@ public:
             return (nr_points);
         }
 
+        /** \brief Getters for RGB related statistics
+          */
+        Matrix3d GetColorConv() const
+        {
+            return (cov_rgb_);
+        }
+
+        Matrix3d GetColorInverseConv() const
+        {
+            return (icov_rgb_);
+        }
+
+        Vector3d GetColorMean() const
+        {
+            return (mean_rgb_);
+        }
+
+        Matrix3d GetColorEvecs() const
+        {
+            return (evecs_rgb_);
+        }
+
+        Vector3d GetClorEvals() const
+        {
+            return (evals_rgb_);
+        }
+
+
 
         /** \brief Number of points contained by voxel */
         int nr_points;
 
         /** \brief 3D voxel centroid */
-        Vector6d mean_;
+        Vector3d mean_;
 
         /** \brief Nd voxel centroid
          * \note Differs from \ref mean_ when other data is used
@@ -173,16 +199,25 @@ public:
         Eigen::VectorXf centroid;
 
         /** \brief Voxel covariance matrix */
-        Matrix6d cov_;
+        Matrix3d cov_;
 
         /** \brief Inverse of voxel covariance matrix */
-        Matrix6d icov_;
+        Matrix3d icov_;
 
         /** \brief Eigen vectors of voxel covariance matrix */
-        Matrix6d evecs_;
+        Matrix3d evecs_;
 
         /** \brief Eigen values of voxel covariance matrix */
-        Vector6d evals_;
+        Vector3d evals_;
+
+        /** \brief properties for rgb information */
+        int nr_points_rgb;
+        Vector3d mean_rgb_;
+        Matrix3d cov_rgb_;
+        Matrix3d icov_rgb_;
+        Matrix3d evecs_rgb_;
+        Vector3d evals_rgb_;
+
     };
 
     /** \brief Pointer to VoxelGridCovarianceRGB leaf structure */
@@ -557,41 +592,35 @@ public:
 
 protected:
 
-       /** \brief Filter cloud and initializes voxel structure.
+    /** \brief Filter cloud and initializes voxel structure.
         * \param[out] output cloud containing centroids of voxels containing a sufficient number of points
         */
-       void applyFilter (PointCloud &output) override;
+    void applyFilter (PointCloud &output) override;
 
-       /** \brief Flag to determine if voxel structure is searchable. */
-       bool searchable_;
+    /** \brief Flag to determine if voxel structure is searchable. */
+    bool searchable_;
 
-       /** \brief Minimum points contained with in a voxel to allow it to be usable. */
-       int min_points_per_voxel_;
+    /** \brief Minimum points contained with in a voxel to allow it to be usable. */
+    int min_points_per_voxel_;
 
-       /** \brief Minimum allowable ratio between eigenvalues to prevent singular covariance matrices. */
-       double min_covar_eigvalue_mult_;
+    /** \brief Minimum allowable ratio between eigenvalues to prevent singular covariance matrices. */
+    double min_covar_eigvalue_mult_;
 
-       /** \brief Voxel structure containing all leaf nodes (includes voxels with less than a sufficient number of points). */
-       std::map<std::size_t, Leaf> leaves_;
+    /** \brief Voxel structure containing all leaf nodes (includes voxels with less than a sufficient number of points). */
+    std::map<std::size_t, Leaf> leaves_;
 
-       /** \brief Point cloud containing centroids of voxels containing atleast minimum number of points. */
-       PointCloudPtr voxel_centroids_;
+    /** \brief Point cloud containing centroids of voxels containing atleast minimum number of points. */
+    PointCloudPtr voxel_centroids_;
 
-       /** \brief Indices of leaf structurs associated with each point in \ref voxel_centroids_ (used for searching). */
-       std::vector<int> voxel_centroids_leaf_indices_;
+    /** \brief Indices of leaf structurs associated with each point in \ref voxel_centroids_ (used for searching). */
+    std::vector<int> voxel_centroids_leaf_indices_;
 
-       /** \brief KdTree generated using \ref voxel_centroids_ (used for searching). */
-       pcl::KdTreeFLANN<PointT> kdtree_;
+    /** \brief KdTree generated using \ref voxel_centroids_ (used for searching). */
+    pcl::KdTreeFLANN<PointT> kdtree_;
 };
-
-
-
-
-
 
 
 } // namespace my_ndt
 
 
-
-#endif // VOXEL_GRID_CONVARIANCE_RGB_H
+#include "voxel_grid_covariance_rgb.hpp"

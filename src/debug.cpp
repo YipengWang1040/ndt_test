@@ -6,6 +6,8 @@
 #include <unordered_map>
 #include <cmath>
 
+#include "voxel_grid_covariance_rgb.h"
+
 namespace my_ndt {
 
 struct rgb_statistics{
@@ -26,6 +28,7 @@ Eigen::Matrix3d euler2matrix(const Eigen::Vector3d& vec){
     ret<<   cos(y)*cos(z), -cos(y)*sin(z), sin(y),
             cos(x)*sin(z)+sin(x)*sin(y)*sin(z), cos(x)*cos(z)-sin(x)*sin(y)*sin(z), -sin(x)*cos(y),
             sin(x)*sin(z)-cos(x)*sin(y)*cos(z), cos(x)*sin(y)*sin(z)+sin(x)*cos(z), cos(x)*cos(y);
+    return ret;
 }
 
 Eigen::Matrix<double, 9,3> prepare_dr_dx(const Eigen::Vector3d& euler_angles){

@@ -32,5 +32,5 @@ include_directories(
 link_directories(${PCL_LIBRARY_DIRS})
 
 add_definitions(${PCL_DEFINITIONS})
-add_executable(ndt_matching src/main.cpp src/debug.cpp src/voxel_grid_convariance_rgb.cpp)
+add_executable(ndt_matching src/main.cpp src/debug.cpp src/voxel_grid_covariance_rgb.cpp)
 target_link_libraries(ndt_matching ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${OpenCV_LIBRARIES}  )
